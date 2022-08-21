@@ -86,7 +86,7 @@ func value_to_grid(value):
 	
 
 
-func get_title_by_value(value):
+func get_tile_by_value(value):
 	for tile in tiles:
 		if str(tile.number) == str(value):
 			return tile
@@ -124,6 +124,52 @@ func _on_Tile_pressed(number):
 	
 	var dir = Vector2(sign(tile.x - empty.x), sign(tile.y - empty.y))
 	var start = Vector2(min(tile.x, empty.x), min(tile.y, empty.y))
+	var end = Vector2(max(tile.x, empty.x), max(tile.y, empty.y))
+	
+	for r in range(end.y, start.y - 1, - 1):
+		for c in range(end.x, start.x - 1, - 1):
+			if board[r][c] == 0:
+				continue
+			
+			var object: TextureButton = get_tile_by_value(board[r][c])
+			object.slide_to((Vector2(c, r) - dir) * tile_size, slide_duration)
+			is_animating = true
+			tiles_animating += 1
+	
+	var old_board = board.duplicate(true)
+	
+	if tile.y == empty.y:
+		if dir.x == - 1:
+			board[tile.y] = slide_row(board[tile.y], 1, start.x)
+		else:
+			board[tile.y] = slide_row(board[tile.y], -1, end.x)
+			
+	if tile.x == empty.x:
+		var col = []
+		for r in range(size):
+			col.append(board[r][tile.x])
+		
+		if dir.y == -1:
+			col = slide_column(col, 1, start.y)
+		else:
+			col = slide_column(col, -1, end.y)
+		
+		for r in range(size):
+			board[r][tile.x] = col[r]
+			
+	var moves_made = 0
+	for r in range(size):
+		for c in range(size):
+			if old_board[r][c] != board[r][c]:
+				moves_made += 1
+	
+	move_count += moves_made - 1
+	emit_signal("moves_updated", move_count)
+	
+	var is_solved = is_board_solved()
+	if is_solved:
+		game_state = GAME_STATES.WON
+		emit_signal("game_won")
 
 
 func is_board_solvable(flat):
@@ -131,4 +177,20 @@ func is_board_solvable(flat):
 
 
 func scramble_board():
+	pass
+
+
+func reset_board():
+	pass
+
+
+func set_tile_position(r: int, c: int, val: int):
+	pass
+
+
+func _process(delta):
+	pass
+	
+
+func slide_row(row, dir, limiter):
 	pass

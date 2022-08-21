@@ -1,6 +1,7 @@
 extends KinematicBody2D
 
-var speed = 50
+var speed = 100
+
 var velocity = Vector2()
 
 # Called when the node enters the scene tree for the first time.

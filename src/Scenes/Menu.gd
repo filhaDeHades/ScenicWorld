@@ -21,17 +21,35 @@ func _on_JogarBotao_pressed():
 
 
 func _on_InstrucoesBotao_pressed():
-	pass # Replace with function body.
+	$Principal.visible = false
+	$Instrucoes.visible = true
 
 
 func _on_SobreBotao_pressed():
-	pass # Replace with function body.
+	$Principal.visible = false
+	$Sobre.visible = true
 
 
 func _on_CreditosBotao_pressed():
-	pass # Replace with function body.
+	$Principal.visible = false
+	$Creditos.visible = true
 
 
 #Idiomas
 func _on_en_pressed():
 	get_tree().change_scene("res://src/Scenes/MenuEn.tscn")
+
+
+func _on_VoltarInstrucoes_pressed():
+	$Principal.visible = true
+	$Instrucoes.visible = false
+
+
+func _on_VoltarSobre_pressed():
+	$Principal.visible = true
+	$Sobre.visible = false
+
+
+func _on_VoltarCreditos_pressed():
+	$Principal.visible = true
+	$Creditos.visible = false

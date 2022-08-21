@@ -173,24 +173,111 @@ func _on_Tile_pressed(number):
 
 
 func is_board_solvable(flat):
-	pass
+	var parity = 0
+	var grid_width = size
+	var row = 0
+	var blank_row = 0
+	for i in range(size*size):
+		if i % grid_width == 0:
+			row += 1
+		
+		if flat[i] == 0:
+			blank_row = row
+			continue
+		
+		for j in range(i + 1, size * size):
+			if flat[i] > flat[j] and flat[j] != 0:
+				parity += 1
+	
+	if i % grid_width == 2:
+		if blank_row % 2 == 0:
+			return parity % 2 == 0
+		else:
+			return parity % 2 != 0
+	else:
+		return parity % 2 == 0
+		
 
 
 func scramble_board():
-	pass
+	reset_board()
+	
+	var temp_flat_board = []
+	for i in range(size * size -1, -1, -1):
+		temp_flat_board.append(i)
+	
+	randomize()
+	temp_flat_board.append()
+	
+	var is_solvable = is_board_solvable(temp_flat_board)
+	while not is_solvable:
+		randomize()
+		temp_flat_board.shuffle()
+		is_solvable = is_board_solvable(temp_flat_board)
+		
+	for r in range(size):
+		for c in range(size):
+			board[r][c] = temp_flat_board[r * size + c]
+			if board[r][c] != 0:
+				set_tile_position(r, c, board[r][c])
+	empty = value_to_grid(0)
 
 
 func reset_board():
-	pass
+	reset_move_count()
+	board = []
+	for r in range(size):
+		board.append(([]))
+		for c in range(size):
+			board[r].append(r * size + c + 1)
+			if r * size + c + 1 == size * size:
+				board[r][c] = 0
+			else:
+				set_tile_position(r, c, board[r][c])
+	empty = value_to_grid(0)
 
 
 func set_tile_position(r: int, c: int, val: int):
-	pass
+	var object: TextureButton = get_tile_by_value(val)
+	object.set_position(Vector2(c, r) * tile_size)
 
 
 func _process(delta):
-	pass
+	var is_pressed = true
+	var dir = Vector2.ZERO
+	if (Input.is_action_just_pressed("move_left")):
+		dir.x = -1
+	if (Input.is_action_just_pressed("move_right")):
+		dir.x = -1
+	if (Input.is_action_just_pressed("move_left")):
+		dir.x = -1
+	if (Input.is_action_just_pressed("move_left")):
+		dir.x = -1
 	
 
 func slide_row(row, dir, limiter):
+	pass
+	
+
+func slide_column(col, dir, limiter):
+	pass
+
+
+func _on_Tile_slide_completed(_number):
+	pass
+
+
+func reset_move_count():
+	pass
+
+
+func set_tile_numbers(state):
+	pass
+
+
+func update_size(new_size):
+	pass
+
+
+func update_background_texture(texture):
 	pass

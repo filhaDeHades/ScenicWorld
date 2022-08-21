@@ -1,15 +1,15 @@
 extends TextureButton
 
 
-var numero
+var number
 
 signal tile_pressed
 signal slide_completed
 
 
-func set_texto(novo_numero):
-	numero = novo_numero
-	$Numero/Label.text = str(numero)
+func set_text(new_number):
+	number = new_number
+	$Numero/Label.text = str(number)
 	
 
 func set_sprite(new_frame, size, tile_size):
@@ -43,13 +43,13 @@ func slide_to(new_position, duration):
 	tween.start()
 	
 	
-func set_visibilidade_numero(status):
-	$Numero.visible(status)
+func set_number_visible(status):
+	$Numero.visible = status
 
 
 func _on_Tile_pressed():
-	emit_signal("tile_pressed", numero)
+	emit_signal("tile_pressed", number)
 	
 
 func _on_Tween_tween_completed(_object, _key):
-	emit_signal("slide_completed", numero)
+	emit_signal("slide_completed", number)

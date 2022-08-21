@@ -80,8 +80,9 @@ _global_script_class_icons={
 
 [application]
 
-config/name="WGJ - Jogo"
+config/name="Scenic World"
 run/main_scene="res://src/Scenes/Menu.tscn"
+boot_splash/image="res://Assets/Sprites/Menus/TitleScene.png"
 config/icon="res://icon.png"
 
 [display]

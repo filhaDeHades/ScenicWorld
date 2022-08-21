@@ -53,3 +53,7 @@ func _on_VoltarSobre_pressed():
 func _on_VoltarCreditos_pressed():
 	$Principal.visible = true
 	$Creditos.visible = false
+
+
+func _on_ToolButton_pressed():
+	get_tree().quit()

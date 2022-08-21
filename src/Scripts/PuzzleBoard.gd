@@ -77,13 +77,13 @@ func print_board():
 			row += str(board[r][c]).pad_zeros(2) + ' '
 			print(row)
 
+
 func value_to_grid(value):
 	for r in range(size):
 		for c in range(size):
 			if (board[r][c] == value):
 				return Vector2(c, r)
 	return null
-	
 
 
 func get_tile_by_value(value):
@@ -189,14 +189,13 @@ func is_board_solvable(flat):
 			if flat[i] > flat[j] and flat[j] != 0:
 				parity += 1
 	
-	if i % grid_width == 2:
+	if grid_width % 2 == 0:
 		if blank_row % 2 == 0:
 			return parity % 2 == 0
 		else:
 			return parity % 2 != 0
 	else:
 		return parity % 2 == 0
-		
 
 
 func scramble_board():
@@ -207,7 +206,7 @@ func scramble_board():
 		temp_flat_board.append(i)
 	
 	randomize()
-	temp_flat_board.append()
+	temp_flat_board.shuffle()
 	
 	var is_solvable = is_board_solvable(temp_flat_board)
 	while not is_solvable:
@@ -245,39 +244,103 @@ func set_tile_position(r: int, c: int, val: int):
 func _process(delta):
 	var is_pressed = true
 	var dir = Vector2.ZERO
-	if (Input.is_action_just_pressed("move_left")):
+	if (Input.is_action_just_pressed("esquerda")):
 		dir.x = -1
-	if (Input.is_action_just_pressed("move_right")):
+	elif (Input.is_action_just_pressed("direita")):
+		dir.x = 1
+	elif (Input.is_action_just_pressed("cima")):
 		dir.x = -1
-	if (Input.is_action_just_pressed("move_left")):
+	elif (Input.is_action_just_pressed("baixo")):
 		dir.x = -1
-	if (Input.is_action_just_pressed("move_left")):
-		dir.x = -1
+	else:
+		is_pressed = false
+	
+	if is_pressed:
+		empty = value_to_grid(0)
+		
+		var nr = empty.y + dir.y
+		var nc = empty.x + dir.x
+		if (nr == -1 or nc == -1 or nr >= size or nc >= size):
+			return
+		var tile_pressed = board[nr][nc]
+		print(tile_pressed)
+		_on_Tile_pressed(tile_pressed)
 	
 
 func slide_row(row, dir, limiter):
-	pass
+	var empty_index = row.find(0)
+	
+	if dir == 1:
+		var start = row.slice(0, limiter)
+		start.pop_back()
+		var pre = row.slice(limiter, empty_index)
+		pre.pop_back()
+		var post = row.slice(empty_index, row.size())
+		post.pop_front()
+		return start + [0] + pre + post
+	else:
+		var pre = row.slice(0, empty_index)
+		pre.pop_back()
+		var post = row.slice(empty_index, limiter)
+		post.pop_front()
+		var end = row.slice(limiter, row.size() - 1)
+		end.pop_front()
+		return pre + post + [0] + end
 	
 
 func slide_column(col, dir, limiter):
-	pass
+	var empty_index = col.find(0)
+	
+	if dir == 1:
+		var start = col.slice(0, limiter)
+		start.pop_back()
+		var pre = col.slice(limiter, empty_index)
+		pre.pop_back()
+		var post = col.slice(empty_index, col.size())
+		post.pop_front()
+		return start + [0] + pre + post
+	else:
+		var pre = col.slice(0, empty_index)
+		pre.pop_back()
+		var post = col.slice(empty_index, limiter)
+		post.pop_front()
+		var end = col.slice(limiter, col.size() - 1)
+		end.pop_front()
+		return pre + post + [0] + end
 
 
 func _on_Tile_slide_completed(_number):
-	pass
+	tiles_animating -= 1
+	if tiles_animating == 0:
+		is_animating = false
 
 
 func reset_move_count():
-	pass
+	move_count = 0
+	emit_signal("moves_updated", move_count)
 
 
 func set_tile_numbers(state):
-	pass
+	number_visible = state
+	for tile in tiles:
+		tile.set_number_visible(state)
 
 
 func update_size(new_size):
-	pass
+	size = int(new_size)
+	print('Atualizando o tamanho do tabuleiro', size)
+	
+	tile_size = floor(get_size().x / size)
+	for tile in tiles:
+		tile.queue_free()
+	tiles = []
+	gen_board()
+	game_state = GAME_STATES.NOT_STARTED
+	reset_move_count()
 
 
 func update_background_texture(texture):
-	pass
+	var background_texture = texture
+	for tile in tiles:
+		tile.set_sprite_texture(texture)
+		tile.update_size(size, tile_size)

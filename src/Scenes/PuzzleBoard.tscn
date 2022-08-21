@@ -10,7 +10,4 @@ script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-size = null
-tile_size = null
 tile_scene = ExtResource( 1 )
-slide_duration = null
